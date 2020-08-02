@@ -49,7 +49,7 @@ public class GunLogParser implements LogParser {
                         String occurrence = scanner.findWithinHorizon(pattern, 0);
                         emitter.next(parser.apply(scanner.match(), occurrence));
                     } catch (IllegalStateException ex) {
-                        // DO NOTHING
+                        break;
                     }
                 }
                 emitter.complete();

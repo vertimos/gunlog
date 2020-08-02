@@ -16,6 +16,14 @@ import reactor.test.StepVerifier;
 public class GunLogParserTest {
 
     @Test
+    public void noLogs_emptyResult() {
+        GunLogParser.common()
+            .parse(from("This is not a log"))
+            .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
+    @Test
     public void oneLog_success() {
         String logLine = "2020-08-01 22:30:00.000 [main] INFO Main.java: This is sample log.";
         GunLogParser.common()
@@ -23,7 +31,6 @@ public class GunLogParserTest {
             .as(StepVerifier::create)
             .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, logLine))
             .verifyComplete();
-    
     }
 
     private InputStream from(String logs) {

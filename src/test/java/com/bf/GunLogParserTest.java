@@ -52,6 +52,17 @@ public class GunLogParserTest {
                 .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, fullLog)).verifyComplete();
     }
 
+    @Test
+    public void twoLogs_long_success() {
+        String first = lines("2020-08-01 22:30:00.000 [main] INFO Main.java: This is sample log.",
+                "second line of first log", "third part of first log");
+        String second = lines("2020-08-01 22:30:02.000 [main] INFO Main.java: This is sample second log.",
+                "second line of second log", "third part of log");
+        GunLogParser.common().parse(asInputStream(lines(first, second))).as(StepVerifier::create)
+                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
+                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second)).verifyComplete();
+    }
+
     private String lines(String... lines) {
         return Stream.of(lines).collect(Collectors.joining(System.lineSeparator()));
     }

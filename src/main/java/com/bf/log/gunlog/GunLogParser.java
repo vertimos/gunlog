@@ -21,6 +21,8 @@ import reactor.core.publisher.Flux;
 
 @AllArgsConstructor(staticName = "of")
 public class GunLogParser implements LogParser {
+    private static final String DEFAULT_LOG_PATTERN = "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?) \\[.*\\] (DEBUG|INFO|WARN|ERROR) .*";
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     @NonNull
@@ -31,8 +33,9 @@ public class GunLogParser implements LogParser {
     private final BiFunction<MatchResult, String, Log> parser;
 
     public static GunLogParser common() {
-        return GunLogParser.of(StandardCharsets.UTF_8, Pattern.compile(
-                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?) \\[.*\\] (DEBUG|INFO|WARN|ERROR) .*"),
+        return GunLogParser.of(StandardCharsets.UTF_8,
+                Pattern.compile(
+                        DEFAULT_LOG_PATTERN + "(\\R.*?)*(?=\\R" + DEFAULT_LOG_PATTERN + ")"),
                 (r, s) -> Log.of(LocalDateTime.parse(r.group(1), DATE_FORMATTER).toInstant(ZoneOffset.UTC),
                         Level.parse(r.group(3)), r.group()));
     }

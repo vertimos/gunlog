@@ -39,7 +39,7 @@ public class GunLogParserTest {
     public void twoLogs_short_success() {
         String first = "2020-08-01 22:30:00.000 [main] INFO Main.java: This is sample log.";
         String second = "2020-08-01 22:30:02.000 [main] INFO Main.java: This is another log.";
-        GunLogParser.common().parse(asInputStream(lines(first, second))).as(StepVerifier::create)
+        GunLogParser.common().parse(asInputStream(lines(first, second))).log().as(StepVerifier::create)
                 .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
                 .expectNext(Log.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second)).verifyComplete();
     }

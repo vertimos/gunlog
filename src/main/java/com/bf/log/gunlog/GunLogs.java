@@ -23,7 +23,7 @@ public class GunLogs implements Logs {
         return source -> new GunLogs(logParser.parse(source));
     }
 
-    public static LogSource of() {
+    public static LogSource common() {
         return source -> new GunLogs(GunLogParser.common().parse(source));
     }
 

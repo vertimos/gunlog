@@ -6,6 +6,6 @@ public class GunLogsTest {
     
     @Test
     public void grep() {
-
+        GunLogs.of().parse(source)
     }
 }

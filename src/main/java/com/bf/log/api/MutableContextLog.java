@@ -4,9 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class Context {
+public class MutableContextLog implements ContextLog {
     private final Map<String, Object> ctx = new HashMap<>();
+    private final Log log;
 
+    private MutableContextLog(Log log) {
+        this.log = log;
+    }
+
+    public static MutableContextLog withContext(Log log) {
+        return new MutableContextLog(log);
+    }
+
+    public Log value() {
+        return log;
+    }
+
+    @Override
     public Optional<Integer> getInt(String key) {
         try {
             return Optional.ofNullable((Integer) ctx.get(key));
@@ -16,11 +30,4 @@ public final class Context {
         }
     }
 
-    public static class ContextReadException extends RuntimeException {
-        private static final long serialVersionUID = 5314781485780522841L;
-
-        ContextReadException(String msg, Throwable thr) {
-            super(msg, thr);
-        }
-    }
 }

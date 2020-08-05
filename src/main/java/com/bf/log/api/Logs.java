@@ -1,11 +1,10 @@
 package com.bf.log.api;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
+import java.util.regex.Pattern;
 import reactor.core.publisher.Flux;
 
 public interface Logs {
@@ -14,17 +13,16 @@ public interface Logs {
 
     Logs grep(String regex);
 
-    Logs enrich(String regexWithVars);
+    Logs enrich(Pattern pattern, String firstVarName, String... otherVarNames);
 
-    Logs enrich(BiConsumer<Log, Context> regexWithVars);
+    Logs enrich(Consumer<MutableContextLog> logConsumer);
 
-    Logs filter(Predicate<Log> predicate);
+    Logs filter(Predicate<ContextLog> predicate);
 
-    Logs filter(BiPredicate<Log, Context> predicate);
+    Logs join(Function<List<ContextLog>, MutableContextLog> joinFunction, Pattern firstPattern,
+            Pattern... otherPatterns);
 
-    Logs join(Function<List<Log>, Log> joinFunction, String regex, String... regexes);
+    Logs first(Pattern firstPattern, Pattern... otherPatterns);
 
-    Logs first(String regex, String... regexes);
-
-    Logs last(String regex, String... regexes);
+    Logs last(Pattern firstPattern, Pattern... otherPatterns);
 }

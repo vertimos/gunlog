@@ -1,19 +1,12 @@
-package com.bf;
+package com.bf.log.gunlog;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.bf.log.api.Log;
-import com.bf.log.gunlog.GunLogParser;
-
 import org.junit.jupiter.api.Test;
-
 import reactor.test.StepVerifier;
+
+import static com.bf.log.gunlog.StringUtils.*;
 
 public class GunLogParserTest {
 
@@ -68,13 +61,5 @@ public class GunLogParserTest {
                 .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
                 .expectNext(Log.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second))
                 .verifyComplete();
-    }
-
-    private String lines(String... lines) {
-        return Stream.of(lines).collect(Collectors.joining(System.lineSeparator()));
-    }
-
-    private InputStream asInputStream(String log) {
-        return new ByteArrayInputStream(log.getBytes(StandardCharsets.UTF_8));
     }
 }

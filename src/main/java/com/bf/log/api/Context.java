@@ -11,7 +11,8 @@ public final class Context {
         try {
             return Optional.ofNullable((Integer) ctx.get(key));
         } catch (ClassCastException ex) {
-            throw new ContextReadException("Property '" + key + "' could not be cast to Integer.", ex);
+            throw new ContextReadException("Property '" + key + "' could not be cast to Integer.",
+                    ex);
         }
     }
 

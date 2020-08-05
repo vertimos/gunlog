@@ -23,9 +23,11 @@ import reactor.core.publisher.FluxSink;
 
 @AllArgsConstructor(staticName = "of")
 public class GunLogParser implements LogParser {
-    private static final String DEFAULT_LOG_PATTERN = "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?) \\[.*\\] (DEBUG|INFO|WARN|ERROR) .*";
+    private static final String DEFAULT_LOG_PATTERN =
+            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?) \\[.*\\] (DEBUG|INFO|WARN|ERROR) .*";
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     @NonNull
     private final Charset charset;
@@ -33,15 +35,22 @@ public class GunLogParser implements LogParser {
     private final Collection<GunLogDef> logDefinitions;
 
     public static GunLogParser common() {
-        return GunLogParser.of(StandardCharsets.UTF_8, List.of(
-                GunLogDef.of(Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*?)*(?=\\R" + DEFAULT_LOG_PATTERN + ")"),
-                        (r, s) -> Log.of(LocalDateTime.parse(r.group(1), DATE_FORMATTER).toInstant(ZoneOffset.UTC),
-                                Level.parse(r.group(3)), r.group())),
-                GunLogDef.of(Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*)*"),
-                        (r, s) -> Log.of(LocalDateTime.parse(r.group(1), DATE_FORMATTER).toInstant(ZoneOffset.UTC),
-                                Level.parse(r.group(3)), r.group()))
+        return GunLogParser
+                .of(StandardCharsets.UTF_8, List.of(
+                        GunLogDef.of(
+                                Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*?)*(?=\\R"
+                                        + DEFAULT_LOG_PATTERN + ")"),
+                                (r, s) -> Log.of(
+                                        LocalDateTime.parse(r.group(1), DATE_FORMATTER)
+                                                .toInstant(ZoneOffset.UTC),
+                                        Level.parse(r.group(3)), r.group())),
+                        GunLogDef.of(Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*)*"),
+                                (r, s) -> Log.of(
+                                        LocalDateTime.parse(r.group(1), DATE_FORMATTER)
+                                                .toInstant(ZoneOffset.UTC),
+                                        Level.parse(r.group(3)), r.group()))
 
-        ));
+                ));
     }
 
     @Override

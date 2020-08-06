@@ -29,8 +29,8 @@ public class GunLogs implements Logs {
     }
 
     @Override
-    public Logs grep(Pattern regex) {
-        return null;
+    public Logs grep(Pattern pattern) {
+        return GunLogs.of(flux().filter(log -> pattern.matcher(log.getValue()).find()));
     }
 
     @Override

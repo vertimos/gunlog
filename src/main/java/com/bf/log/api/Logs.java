@@ -25,6 +25,10 @@ public interface Logs {
 
     Logs grep(Pattern regex);
 
+    default Logs grep(String pattern) {
+        return grep(Pattern.compile(pattern));
+    }
+
     Logs enrich(Pattern pattern, String firstVarName, String... otherVarNames);
 
     Logs enrich(Consumer<MutableContextLog> logConsumer);

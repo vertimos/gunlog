@@ -1,5 +1,13 @@
 package com.bf.log.gunlog;
 
+import com.bf.log.api.Log;
+import com.bf.log.api.LogParser;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -7,50 +15,55 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
 import java.util.Scanner;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.bf.log.api.Log;
-import com.bf.log.api.LogParser;
-
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
-
-@AllArgsConstructor(staticName = "of")
+@AllArgsConstructor(staticName = "of", access = AccessLevel.PRIVATE)
 public class GunLogParser implements LogParser {
-    private static final String DEFAULT_LOG_PATTERN =
-            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,3})?) \\[.*\\] (DEBUG|INFO|WARN|ERROR) .*";
-
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-
+    public static final DateTimeFormatter COMMON_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     @NonNull
     private final Charset charset;
     @NonNull
     private final Collection<GunLogDef> logDefinitions;
 
-    public static GunLogParser common() {
-        return GunLogParser
-                .of(StandardCharsets.UTF_8, List.of(
-                        GunLogDef.of(
-                                Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*?)*(?=\\R"
-                                        + DEFAULT_LOG_PATTERN + ")"),
-                                (r, s) -> Log.of(
-                                        LocalDateTime.parse(r.group(1), DATE_FORMATTER)
-                                                .toInstant(ZoneOffset.UTC),
-                                        Level.parse(r.group(3)), r.group())),
-                        GunLogDef.of(Pattern.compile(DEFAULT_LOG_PATTERN + "(\\R.*)*"),
-                                (r, s) -> Log.of(
-                                        LocalDateTime.parse(r.group(1), DATE_FORMATTER)
-                                                .toInstant(ZoneOffset.UTC),
-                                        Level.parse(r.group(3)), r.group()))
+    public static GunLogParser timeLevelMessage(Pattern pattern) {
+        return line(pattern, (r, s) -> Log.of(
+                LocalDateTime.parse(r.group(1), COMMON_DATE_FORMATTER).toInstant(ZoneOffset.UTC),
+                Level.parse(r.group(2)), r.group()));
+    }
 
-                ));
+    public static GunLogParser timeLevelMessage(Pattern pattern,
+                                                DateTimeFormatter dateTimeFormatter) {
+        return line(pattern, (r, s) -> Log.of(
+                LocalDateTime.parse(r.group(1), dateTimeFormatter).toInstant(ZoneOffset.UTC),
+                Level.parse(r.group(2)), r.group()));
+    }
+
+    public static GunLogParser line(Pattern pattern,
+                                    BiFunction<MatchResult, String, Log> logFactory) {
+        return line(pattern, logFactory, StandardCharsets.UTF_8);
+    }
+
+    public static GunLogParser line(Pattern pattern,
+                                    BiFunction<MatchResult, String, Log> logFactory, Charset charset) {
+        return GunLogParser.of(charset,
+                GunLogDef.of(
+                        Pattern.compile(
+                                pattern.pattern() + "(\\R.*?)*(?=\\R" + pattern.pattern() + ")"),
+                        logFactory),
+                GunLogDef.of(Pattern.compile(pattern.pattern() + "(\\R.*)*"), logFactory)
+        );
+    }
+
+    public static GunLogParser of(Charset charset, GunLogDef logDef, GunLogDef... otherLogDefs) {
+        return of(charset, Stream.concat(Stream.of(logDef), Stream.of(otherLogDefs))
+                .collect(Collectors.toList()));
     }
 
     @Override

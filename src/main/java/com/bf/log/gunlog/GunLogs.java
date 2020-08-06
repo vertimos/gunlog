@@ -8,28 +8,14 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import com.bf.log.api.ContextLog;
 import com.bf.log.api.Log;
-import com.bf.log.api.LogParser;
 import com.bf.log.api.Logs;
 import com.bf.log.api.MutableContextLog;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(staticName = "of")
 public class GunLogs implements Logs {
     private final Flux<Log> logs;
-
-    public static LogSource of(LogParser logParser) {
-        return source -> new GunLogs(logParser.parse(source));
-    }
-
-    public static LogSource common() {
-        return source -> new GunLogs(GunLogParser.common().parse(source));
-    }
-
-    public interface LogSource {
-        GunLogs parse(InputStream source);
-    }
 
     @Override
     public Flux<Log> flux() {

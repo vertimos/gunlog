@@ -7,6 +7,7 @@ import com.bf.log.api.MutableContextLog;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -23,8 +24,12 @@ public class GunLogs implements Logs {
     }
 
     @Override
-    public Logs grep(String regex) {
-        Pattern pattern = Pattern.compile(regex);
+    public Logs between(Instant start, Instant end) {
+        return null;
+    }
+
+    @Override
+    public Logs grep(Pattern regex) {
         return null;
     }
 

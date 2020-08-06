@@ -7,6 +7,7 @@ import reactor.test.StepVerifier;
 
 import java.time.Instant;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 class GunLogsTest {
 
@@ -21,7 +22,7 @@ class GunLogsTest {
                 Log.of(Instant.EPOCH, Level.INFO, "This is another boring log."),
                 secondMatchingLog
         ))
-                .grep(keyword)
+                .grep(Pattern.compile(keyword))
                 .flux()
                 .as(StepVerifier::create)
                 .expectNext(firstMatchingLog)

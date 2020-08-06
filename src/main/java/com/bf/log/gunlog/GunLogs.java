@@ -24,6 +24,7 @@ public class GunLogs implements Logs {
 
     @Override
     public Logs grep(String regex) {
+        Pattern pattern = Pattern.compile(regex);
         return null;
     }
 

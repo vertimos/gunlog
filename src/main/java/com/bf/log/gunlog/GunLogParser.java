@@ -1,6 +1,5 @@
 package com.bf.log.gunlog;
 
-import com.bf.log.api.Log;
 import com.bf.log.api.LogParser;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,25 +32,25 @@ public class GunLogParser implements LogParser {
     private final Collection<GunLogDef> logDefinitions;
 
     public static GunLogParser timeLevelMessage(Pattern pattern) {
-        return line(pattern, (r, s) -> Log.of(
+        return line(pattern, (r, s) -> GunLog.of(
                 LocalDateTime.parse(r.group(1), COMMON_DATE_FORMATTER).toInstant(ZoneOffset.UTC),
                 Level.parse(r.group(2)), r.group()));
     }
 
     public static GunLogParser timeLevelMessage(Pattern pattern,
                                                 DateTimeFormatter dateTimeFormatter) {
-        return line(pattern, (r, s) -> Log.of(
+        return line(pattern, (r, s) -> GunLog.of(
                 LocalDateTime.parse(r.group(1), dateTimeFormatter).toInstant(ZoneOffset.UTC),
                 Level.parse(r.group(2)), r.group()));
     }
 
     public static GunLogParser line(Pattern pattern,
-                                    BiFunction<MatchResult, String, Log> logFactory) {
+                                    BiFunction<MatchResult, String, GunLog> logFactory) {
         return line(pattern, logFactory, StandardCharsets.UTF_8);
     }
 
     public static GunLogParser line(Pattern pattern,
-                                    BiFunction<MatchResult, String, Log> logFactory, Charset charset) {
+                                    BiFunction<MatchResult, String, GunLog> logFactory, Charset charset) {
         return GunLogParser.of(charset,
                 GunLogDef.of(
                         Pattern.compile(
@@ -67,7 +66,7 @@ public class GunLogParser implements LogParser {
     }
 
     @Override
-    public Flux<Log> parse(InputStream source) {
+    public Flux<GunLog> parse(InputStream source) {
         return Flux.create(emitter -> {
             try (Scanner scanner = new Scanner(source, charset)) {
                 logDefinitions.forEach(emitLogs(emitter, scanner));
@@ -76,7 +75,7 @@ public class GunLogParser implements LogParser {
         });
     }
 
-    private Consumer<? super GunLogDef> emitLogs(FluxSink<Log> emitter, Scanner scanner) {
+    private Consumer<? super GunLogDef> emitLogs(FluxSink<GunLog> emitter, Scanner scanner) {
         return logDef -> {
             while (scanner.hasNext()) {
                 try {

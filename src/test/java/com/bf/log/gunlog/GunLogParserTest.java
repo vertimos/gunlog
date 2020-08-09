@@ -1,6 +1,5 @@
 package com.bf.log.gunlog;
 
-import com.bf.log.api.Log;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
@@ -34,7 +33,7 @@ public class GunLogParserTest {
         GunLogParser.timeLevelMessage(LogPatterns.TEST_LOG_PATTERN)
                 .parse(asInputStream(lines(logLine)))
                 .as(StepVerifier::create)
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, logLine))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, logLine))
                 .verifyComplete();
     }
 
@@ -45,8 +44,8 @@ public class GunLogParserTest {
         GunLogParser.timeLevelMessage(LogPatterns.TEST_LOG_PATTERN)
                 .parse(asInputStream(lines(first, second))).log()
                 .as(StepVerifier::create)
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second))
                 .verifyComplete();
     }
 
@@ -57,7 +56,7 @@ public class GunLogParserTest {
         GunLogParser.timeLevelMessage(LogPatterns.TEST_LOG_PATTERN)
                 .parse(asInputStream(fullLog))
                 .as(StepVerifier::create)
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, fullLog))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, fullLog))
                 .verifyComplete();
     }
 
@@ -70,8 +69,8 @@ public class GunLogParserTest {
         GunLogParser.timeLevelMessage(LogPatterns.TEST_LOG_PATTERN)
                 .parse(asInputStream(lines(first, second)))
                 .as(StepVerifier::create)
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
-                .expectNext(Log.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:00.000Z"), Level.INFO, first))
+                .expectNext(GunLog.of(Instant.parse("2020-08-01T22:30:02.000Z"), Level.INFO, second))
                 .verifyComplete();
     }
 }

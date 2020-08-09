@@ -2,13 +2,11 @@ package com.bf.log.api;
 
 import java.util.Optional;
 
-public interface ContextLog {
+public interface ContextLog extends Log {
     Optional<Integer> getInt(String key);
 
     class ContextReadException extends RuntimeException {
-        private static final long serialVersionUID = 5314781485780522841L;
-
-        ContextReadException(String msg, Throwable thr) {
+        public ContextReadException(String msg, Throwable thr) {
             super(msg, thr);
         }
     }

@@ -1,6 +1,5 @@
 package com.bf.log.gunlog;
 
-import com.bf.log.api.Log;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -14,12 +13,12 @@ class GunLogsTest {
     @Test
     void grep() {
         String keyword = "interesting";
-        Log firstMatchingLog = Log.of(Instant.EPOCH, Level.INFO, "This is " + keyword + " log.");
-        Log secondMatchingLog = Log.of(Instant.EPOCH, Level.INFO, "This is another " + keyword + " log.");
+        GunLog firstMatchingLog = GunLog.of(Instant.EPOCH, Level.INFO, "This is " + keyword + " log.");
+        GunLog secondMatchingLog = GunLog.of(Instant.EPOCH, Level.INFO, "This is another " + keyword + " log.");
         GunLogs.of(Flux.just(
                 firstMatchingLog,
-                Log.of(Instant.EPOCH, Level.INFO, "This is boring log."),
-                Log.of(Instant.EPOCH, Level.INFO, "This is another boring log."),
+                GunLog.of(Instant.EPOCH, Level.INFO, "This is boring log."),
+                GunLog.of(Instant.EPOCH, Level.INFO, "This is another boring log."),
                 secondMatchingLog
         ))
                 .grep(Pattern.compile(keyword))

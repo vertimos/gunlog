@@ -1,17 +1,12 @@
 package com.bf.log.api;
 
-import lombok.NonNull;
-import lombok.Value;
-
 import java.time.Instant;
 import java.util.logging.Level;
 
-@Value(staticConstructor = "of")
-public class Log {
-    @NonNull
-    Instant time;
-    @NonNull
-    Level level;
-    @NonNull
-    String value;
+public interface Log {
+    Instant getTime();
+
+    Level getLevel();
+
+    String getValue();
 }

@@ -1,5 +1,6 @@
 package com.bf.log.api;
 
+import com.bf.log.gunlog.GunLog;
 import reactor.core.publisher.Flux;
 
 import java.time.Instant;
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 
 public interface Logs {
 
-    Flux<Log> flux();
+    Flux<GunLog> flux();
 
     Logs between(Instant start, Instant end);
 

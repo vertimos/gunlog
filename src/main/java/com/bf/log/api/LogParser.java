@@ -2,8 +2,9 @@ package com.bf.log.api;
 
 import java.io.InputStream;
 
+import com.bf.log.gunlog.GunLog;
 import reactor.core.publisher.Flux;
 
 public interface LogParser {
-    Flux<Log> parse(InputStream source);
+    Flux<GunLog> parse(InputStream source);
 }

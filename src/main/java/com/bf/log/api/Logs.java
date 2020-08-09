@@ -16,6 +16,8 @@ public interface Logs {
 
     Logs between(Instant start, Instant end);
 
+    Logs betweenInclusive(Instant start, Instant end);
+
     default Logs after(Instant start) {
         return between(start, Instant.MAX);
     }

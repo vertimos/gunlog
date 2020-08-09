@@ -28,4 +28,50 @@ class GunLogsTest {
                 .expectNext(secondMatchingLog)
                 .verifyComplete();
     }
+
+    @Test
+    void between() {
+        GunLogs.of(
+                Flux.just(
+                        logAt(Instant.EPOCH.plusMillis(10)),
+                        logAt(Instant.EPOCH.plusMillis(11)),
+                        logAt(Instant.EPOCH.plusMillis(12)),
+                        logAt(Instant.EPOCH.plusMillis(13)),
+                        logAt(Instant.EPOCH.plusMillis(14)),
+                        logAt(Instant.EPOCH.plusMillis(15))
+                )
+        )
+                .between(Instant.EPOCH.plusMillis(11), Instant.EPOCH.plusMillis(14))
+                .flux()
+                .as(StepVerifier::create)
+                .expectNext(logAt(Instant.EPOCH.plusMillis(12)))
+                .expectNext(logAt(Instant.EPOCH.plusMillis(13)))
+                .verifyComplete();
+    }
+
+    @Test
+    void betweenInclusive() {
+        GunLogs.of(
+                Flux.just(
+                        logAt(Instant.EPOCH.plusMillis(10)),
+                        logAt(Instant.EPOCH.plusMillis(11)),
+                        logAt(Instant.EPOCH.plusMillis(12)),
+                        logAt(Instant.EPOCH.plusMillis(13)),
+                        logAt(Instant.EPOCH.plusMillis(14)),
+                        logAt(Instant.EPOCH.plusMillis(15))
+                )
+        )
+                .betweenInclusive(Instant.EPOCH.plusMillis(11), Instant.EPOCH.plusMillis(14))
+                .flux()
+                .as(StepVerifier::create)
+                .expectNext(logAt(Instant.EPOCH.plusMillis(11)))
+                .expectNext(logAt(Instant.EPOCH.plusMillis(12)))
+                .expectNext(logAt(Instant.EPOCH.plusMillis(13)))
+                .expectNext(logAt(Instant.EPOCH.plusMillis(14)))
+                .verifyComplete();
+    }
+
+    private GunLog logAt(Instant time) {
+        return GunLog.of(time, Level.INFO, "any");
+    }
 }

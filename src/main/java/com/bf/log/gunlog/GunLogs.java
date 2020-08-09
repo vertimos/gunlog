@@ -24,7 +24,16 @@ public class GunLogs implements Logs {
 
     @Override
     public Logs between(Instant start, Instant end) {
-        return null;
+        return GunLogs.of(flux().filter(log -> log.getTime().isAfter(start) && log.getTime().isBefore(end)));
+    }
+
+    @Override
+    public Logs betweenInclusive(Instant start, Instant end) {
+        return GunLogs.of(flux().filter(log ->
+                        (log.getTime().equals(start) || log.getTime().isAfter(start))
+                                && (log.getTime().equals(end) || log.getTime().isBefore(end))
+                )
+        );
     }
 
     @Override

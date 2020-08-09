@@ -74,4 +74,26 @@ class GunLogsTest {
     private GunLog logAt(Instant time) {
         return GunLog.of(time, Level.INFO, "any");
     }
+
+    @Test
+    void enrich() {
+        GunLogs.of(
+                Flux.just(
+                        logWithMessage("do not enrich(abc, def)"),
+                        logWithMessage("time pair(abc, def)"),
+                        logWithMessage("skip enriching")
+                )
+        )
+                .enrich(Pattern.compile("pair\\(([a-z]+), ([a-z]+)\\)"), "first", "second")
+                .flux()
+                .as(StepVerifier::create)
+                .expectNext(logWithMessage("do not enrich(abc, def)"))
+                .expectNext(logWithMessage("time pair(abc, def)").put("first", "abc").put("second", "def"))
+                .expectNext(logWithMessage("skip enriching"))
+                .verifyComplete();
+    }
+
+    private GunLog logWithMessage(String message) {
+        return GunLog.of(Instant.EPOCH, Level.INFO, message);
+    }
 }

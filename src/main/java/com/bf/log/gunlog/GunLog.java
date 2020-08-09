@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 @Value(staticConstructor = "of")
 public class GunLog implements MutableContextLog {
-    Map<String, Object> ctx = new HashMap<>();
+    Map<String, String> ctx = new HashMap<>();
 
     @NonNull
     Instant time;
@@ -24,10 +24,16 @@ public class GunLog implements MutableContextLog {
     @Override
     public Optional<Integer> getInt(String key) {
         try {
-            return Optional.ofNullable((Integer) ctx.get(key));
+            return Optional.ofNullable(ctx.get(key)).map(Integer::parseInt);
         } catch (ClassCastException ex) {
             throw new ContextReadException("Property '" + key + "' could not be cast to Integer.",
                     ex);
         }
+    }
+
+    @Override
+    public GunLog put(String key, String value) {
+        ctx.put(key, value);
+        return this;
     }
 }

@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @AllArgsConstructor(staticName = "of")
 public class GunLogs implements Logs {
@@ -43,7 +46,23 @@ public class GunLogs implements Logs {
 
     @Override
     public Logs enrich(Pattern pattern, String firstVarName, String... otherVarNames) {
-        return null;
+        return GunLogs.of(flux().map(log -> {
+            Matcher matcher = pattern.matcher(log.getValue());
+            return matcher.find()
+                    ? enrich(log, matcher, Stream.concat(Stream.of(firstVarName), Stream.of(otherVarNames)).toArray(String[]::new))
+                    : log;
+        }));
+    }
+
+    private GunLog enrich(GunLog log, MatchResult matchResult, String[] vars) {
+        int i1 = matchResult.groupCount();
+        if (i1 != vars.length) {
+            throw new GunLogException("TODO: enrich");
+        }
+        for (int i = 0; i < vars.length; i++) {
+            log.put(vars[i], matchResult.group(i + 1));
+        }
+        return log;
     }
 
     @Override

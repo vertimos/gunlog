@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,11 @@ public class GunLogs implements Logs {
     @Override
     public Flux<GunLog> flux() {
         return logs;
+    }
+
+    @Override
+    public Logs level(Level level) {
+        return GunLogs.of(flux().filter(log -> log.getLevel() == level));
     }
 
     @Override

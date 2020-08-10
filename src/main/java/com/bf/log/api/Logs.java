@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public interface Logs {
 
     Flux<GunLog> flux();
+
+    Logs level(Level level);
 
     Logs between(Instant start, Instant end);
 

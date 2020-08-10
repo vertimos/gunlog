@@ -30,6 +30,26 @@ class GunLogsTest {
     }
 
     @Test
+    void level() {
+        GunLogs.of(
+                Flux.just(
+                        log(Level.INFO),
+                        log(Level.WARNING),
+                        log(Level.SEVERE)
+                )
+        )
+                .level(Level.WARNING)
+                .flux()
+                .as(StepVerifier::create)
+                .expectNext(log(Level.WARNING))
+                .verifyComplete();
+    }
+
+    private GunLog log(Level level) {
+        return GunLog.of(Instant.EPOCH, level, "any");
+    }
+
+    @Test
     void between() {
         GunLogs.of(
                 Flux.just(

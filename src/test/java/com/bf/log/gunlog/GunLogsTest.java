@@ -89,7 +89,7 @@ class GunLogsTest {
     }
 
     @Test
-    void enrich() {
+    void enrich_pattern() {
         GunLogs.of(
                 Flux.just(
                         logMessage("do not enrich(abc, def)"),
@@ -103,6 +103,24 @@ class GunLogsTest {
                 .expectNext(logMessage("do not enrich(abc, def)"))
                 .expectNext(logMessage("time pair(abc, def)").put("first", "abc").put("second", "def"))
                 .expectNext(logMessage("skip enriching"))
+                .verifyComplete();
+    }
+
+    @Test
+    void join_one_pattern() {
+        GunLogs.of(
+                Flux.just(
+                        logMessage("car is of red color"),
+                        logMessage("car is of blue color"),
+                        logMessage("red car costs 5 euro"),
+                        logMessage("blue car costs 12 euro")
+                )
+        )
+                .join(j -> logMessage(j.get(0).getValue() + " and " + j.get(1).getValue()), Pattern.compile("car is of ([a-z]+) color"), Pattern.compile("([a-z]+) car costs"))
+                .flux()
+                .as(StepVerifier::create)
+                .expectNext(logMessage("car is of red color and red car costs 5 euro"))
+                .expectNext(logMessage("car is of blue color and blue car costs 12 euro"))
                 .verifyComplete();
     }
 }

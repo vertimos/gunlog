@@ -8,10 +8,7 @@ import reactor.core.publisher.Flux;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,16 +66,6 @@ public class GunLogs implements Logs {
             log.put(vars[i], matchResult.group(i + 1));
         }
         return log;
-    }
-
-    @Override
-    public Logs enrich(Consumer<MutableContextLog> logConsumer) {
-        return null;
-    }
-
-    @Override
-    public Logs filter(Predicate<ContextLog> predicate) {
-        return null;
     }
 
     @Override

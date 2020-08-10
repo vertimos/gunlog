@@ -8,14 +8,29 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public interface Logs {
 
     Flux<GunLog> flux();
 
-    Logs level(Level level);
+    Logs level(String level);
+
+    default Logs debug() {
+        return level("debug");
+    }
+
+    default Logs info() {
+        return level("info");
+    }
+
+    default Logs warn() {
+        return level("warn");
+    }
+
+    default Logs error() {
+        return level("error");
+    }
 
     Logs between(Instant start, Instant end);
 

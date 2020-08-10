@@ -27,8 +27,8 @@ public class GunLogs implements Logs {
     }
 
     @Override
-    public Logs level(Level level) {
-        return GunLogs.of(flux().filter(log -> log.getLevel() == level));
+    public Logs level(String level) {
+        return GunLogs.of(flux().filter(log -> log.getLevel().equalsIgnoreCase(level)));
     }
 
     @Override

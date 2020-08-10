@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Scanner;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,14 +33,14 @@ public class GunLogParser implements LogParser {
     public static GunLogParser timeLevelMessage(Pattern pattern) {
         return line(pattern, (r, s) -> GunLog.of(
                 LocalDateTime.parse(r.group(1), COMMON_DATE_FORMATTER).toInstant(ZoneOffset.UTC),
-                Level.parse(r.group(2)), r.group()));
+                r.group(2), r.group()));
     }
 
     public static GunLogParser timeLevelMessage(Pattern pattern,
                                                 DateTimeFormatter dateTimeFormatter) {
         return line(pattern, (r, s) -> GunLog.of(
                 LocalDateTime.parse(r.group(1), dateTimeFormatter).toInstant(ZoneOffset.UTC),
-                Level.parse(r.group(2)), r.group()));
+                r.group(2), r.group()));
     }
 
     public static GunLogParser line(Pattern pattern,

@@ -17,7 +17,7 @@ public class GunLog implements MutableContextLog {
     @NonNull
     Instant time;
     @NonNull
-    Level level;
+    String level;
     @NonNull
     String value;
 

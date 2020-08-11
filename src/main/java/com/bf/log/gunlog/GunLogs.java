@@ -1,14 +1,10 @@
 package com.bf.log.gunlog;
 
-import com.bf.log.api.ContextLog;
 import com.bf.log.api.Logs;
-import com.bf.log.api.MutableContextLog;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.function.Function;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,21 +62,5 @@ public class GunLogs implements Logs {
             log.put(vars[i], matchResult.group(i + 1));
         }
         return log;
-    }
-
-    @Override
-    public Logs join(Function<List<ContextLog>, MutableContextLog> joinFunction,
-                     Pattern firstPattern, Pattern... otherPatterns) {
-        return null;
-    }
-
-    @Override
-    public Logs first(Pattern firstPattern, Pattern... otherPatterns) {
-        return null;
-    }
-
-    @Override
-    public Logs last(Pattern firstPattern, Pattern... otherPatterns) {
-        return null;
     }
 }
